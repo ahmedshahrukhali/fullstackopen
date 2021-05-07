@@ -1,15 +1,46 @@
 import React, { useState } from 'react';
 
-const Statistics = ({ value , text }) => {
 
+const Statistic = ({text, value}) => {
   return (
-    <div>
-      <tr><td>{text}</td> <td>{value}</td></tr>
-    </div>
+  <tr>
+    <td>{text}</td><td>{value}</td>
+    </tr>
   )
 }
-//bad={bad} neutral={neutral} netpos={netpos} avg={avg} allClicks={allClicks} />    
-//
+
+
+const Statistics = ({ good , neutral , bad }) => {
+
+  const total = good+neutral+bad 
+  const avg=((good-bad)/total)
+  const netpos = good/total*100
+
+  if( total > 0) {
+    return (
+    <table><tbody>
+    
+      <Statistic value={good} text='good' />
+      <Statistic value={neutral} text='neutral' />
+      <Statistic value={bad} text='bad' />
+      <Statistic value={avg} text='avg' />
+      <Statistic value={netpos+'%'} text='netpos' />    
+    
+    </tbody></table>
+
+    )
+  
+  } else {
+      return (
+        <div>
+          No feedback given
+        </div>
+      )
+  
+  }
+}
+
+
 const Button = ({ handleClick, text }) => (
   <button onClick={handleClick}>
     {text}
@@ -18,28 +49,22 @@ const Button = ({ handleClick, text }) => (
 
 
 const App = () => {
-  const [good, setGood] = useState(0)
-  const [neutral, setNeutral] = useState(0)
-  const [bad, setBad] = useState(0)
-  const [allClicks, setAll ] = useState(0)
+  
+  const [feedback, setFeedback] = useState({
+    good: 0, neutral: 0, bad: 0
+  })
 
-
-  let avg=((good-bad)/allClicks)
-  let netpos = good/allClicks
 
   const handleGoodClick = () => {
-    setAll(allClicks + 1)
-    setGood(good + 1 )
+    setFeedback({...feedback, good: feedback.good + 1})
   }
 
   const handleNeutralClick = () => {
-    setAll(allClicks + 1)
-    setNeutral(neutral + 1)
+    setFeedback({...feedback, neutral: feedback.neutral + 1})
   }
 
   const handleBadClick = () => {
-    setAll(allClicks + 1)
-    setBad(bad + 1)
+    setFeedback({...feedback, bad: feedback.bad + 1})
   }
 
   return (
@@ -50,15 +75,10 @@ const App = () => {
       <Button handleClick={handleNeutralClick} text='neutral' />
       <Button handleClick={handleBadClick} text='bad' />
       <h1>stats</h1>
+
+      <Statistics good={feedback.good} neutral={feedback.neutral} bad={feedback.bad} />
       
-      <table><tbody>
-      <Statistics value={good} text='good' />
-      <Statistics value={neutral} text='neutral' />
-      <Statistics value={bad} text='bad' />
-      <Statistics value={avg} text='avg' />
-      <Statistics value={netpos} text='positive' />
-      </tbody></table>
-    
+      
     </div>
   )
 }
